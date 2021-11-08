@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import './App.css';
 import { create} from 'ipfs-http-client';
-import document from '../abis/document.json';
+import document2 from '../abis/document2.json';
 import Web3 from 'web3';
 
 //const ipfs = create({host:'ipfs.infura.io',port:5001,protocol:'https'})
 const ipfs = create('https://ipfs.infura.io:5001/api/v0')
 class App extends Component {
 
-  async componentWillMount(){
+  async componentDidMount(){
     await this.loadWeb3()
     await this.loadBlockchainData()
   }
@@ -25,15 +25,17 @@ class App extends Component {
     this.setState({...this.state,account: accounts[0]})
     const networkId = await web3.eth.net.getId()
     
-    const networkData = document.networks[networkId]
+    const networkData = document2.networks[networkId]
     if(networkData){
       //fetch contract
-      const abi = document.abi
+      const abi = document2.abi
       const address = networkData.address
       const contract = web3.eth.Contract(abi, address)
       this.setState({contract})
-      const fileHash = await contract.methods.get().call()
-      this.setState({...this.state,fileHash:"https://ipfs.infura.io/ipfs/"+fileHash})
+      const fileHash = await contract.methods.getDocuments(this.state.account).call()
+      console.log(fileHash)
+      this.setState({...this.state,fileHash : fileHash})
+      console.log(this.state.fileHash)
     }else{
       window.alert('Smart Contract not deployed to detected network')
     }
@@ -44,7 +46,7 @@ class App extends Component {
       account: '',
       buffer : null,
       contract: null,
-      fileHash: '' 
+      fileHash: []
     };
   }
 
@@ -87,11 +89,12 @@ class App extends Component {
       }catch(e){
         console.log(e);
       }
-
+      //this.setState({...this.state,fileHash : [...this.state.fileHash , fileHash]})
+      //console.log(this.state.fileHash)
       //step 2: store on blockchain
-      this.state.contract.methods.set(fileHash).send({ from: this.state.account }).then((r)=>{
+      this.state.contract.methods.addDocument(fileHash).send({ from: this.state.account }).then((r)=>{
         // console.log(file)
-        this.setState({...this.state,fileHash : "https://ipfs.infura.io/ipfs/"+fileHash})
+        //this.setState({...this.state,fileHash : fileHash.push("https://ipfs.infura.io/ipfs/"+fileHash)})
         
       })
       .catch(err=>console.log(err))
@@ -119,7 +122,7 @@ class App extends Component {
           <div className="row">
             <main role="main" className="col-lg-12 d-flex text-center">
               <div className="content mr-auto ml-auto">
-                <img src={`${this.state.fileHash}`} height="200" width="300"className="App-logo" alt="document" />
+                
                 <p>&nbsp;</p>
                 <h2>Upload medical records</h2>
                 <form onSubmit={this.onSubmit}>
@@ -133,6 +136,13 @@ class App extends Component {
                   <br/>
                   <button type="submit">Submit</button>            
                 </form>
+                <ul>
+                  {this.state.fileHash.map((fileUrl)=>(
+                    <li key={fileUrl}>
+                      <img src={`https://ipfs.infura.io/ipfs/${fileUrl}`} height="200" width="300"className="App-logo" alt="document" />
+                    </li>
+                  ))}
+                </ul>
               </div>
             </main>
           </div>
