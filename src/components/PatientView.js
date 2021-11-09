@@ -2,18 +2,18 @@ import React, { Component } from 'react';
 import './App.css';
 import { create} from 'ipfs-http-client';
 import document from '../abis/document1.json';
-import loadweb3 from './loadweb3';
+import Web3 from "web3";
 
 const ipfs = create('https://ipfs.infura.io:5001/api/v0')
 class PatientView extends Component {
 //   render(){ return  (<div>Hello world</div>)}
   async componentDidMount(){
-    await loadweb3();
+    await this.loadWeb3();
     await this.loadBlockchainData();
   }
 
   //get the account
-  //get the network
+  //get the network 
   //get the smartcontract --> abi -->address
   //get the filehash
 
@@ -51,16 +51,16 @@ class PatientView extends Component {
     };
   }
 
-  // async loadWeb3() {
-  //   if (window.ethereum){
-  //     window.web3= new Web3(window.ethereum)
-  //     await window.ethereum.enable()
-  //   } if(window.web3){
-  //     window.web3 = new Web3(window.web3.currentProvider)
-  //   }else {
-  //     window.alert('Please use metamask')
-  //   }
-  // }
+  async loadWeb3() {
+    if (window.ethereum){
+      window.web3= new Web3(window.ethereum)
+      await window.ethereum.enable()
+    } if(window.web3){
+      window.web3 = new Web3(window.web3.currentProvider)
+    }else {
+      window.alert('Please use metamask')
+    }
+  }
 
   captureFile = (event) => {
     event.preventDefault()
@@ -103,7 +103,7 @@ class PatientView extends Component {
     // const abi = document.abi
     // const address = networkData.address
     // const contract = web3.eth.Contract(abi, address)
-    this.state.contract.methods.setDetails("Jack Daniel", 35, 123412341234, "jack@jack.com",
+    this.state.contract.methods.setDetails("Jack Daniel", "35", "123412341234", "jack@jack.com",
     "9876543212", "Yemen road, Yemen", "A+", "Diabetes", "Yemen Hospital, R Hospital" )
     .send({ from: this.state.account }).then((r)=>{}).catch(err=>console.log(err))
     
