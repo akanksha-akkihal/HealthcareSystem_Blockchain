@@ -120,7 +120,7 @@ class PatientView extends Component {
     // const details = await contract.methods.setDetails("Jack Daniel", 35, 123412341234, "jack@jack.com",
     //                         9876543212, "Yemen road, Yemen", "A+", "Diabetes", "Yemen Hospital, R Hospital" ).call()
     const details = await contract.methods.getUserDetails(this.state.account).call()
-    console.log(details[Name]);
+    console.log(details.Name);
   }
   
   onSubmit = async (event) =>{
@@ -144,7 +144,7 @@ class PatientView extends Component {
       this.state.contract.methods.addDocument(fileHash).send({ from: this.state.account }).then((r)=>{
         // console.log(file)
         //this.setState({...this.state,fileHash : fileHash.push("https://ipfs.infura.io/ipfs/"+fileHash)})
-        this.setState({...this.state,fileHash : fileHash})
+        // this.setState({...this.state,fileHash : fileHash})
       })
       .catch(err=>console.log(err))
 
