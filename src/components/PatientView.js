@@ -2,14 +2,14 @@ import React, { Component } from 'react';
 import './App.css';
 import { create} from 'ipfs-http-client';
 import document from '../abis/document1.json';
-import Web3 from 'web3';
+import loadweb3 from './loadweb3';
 
 const ipfs = create('https://ipfs.infura.io:5001/api/v0')
 class PatientView extends Component {
 //   render(){ return  (<div>Hello world</div>)}
   async componentDidMount(){
-    await this.loadWeb3()
-    await this.loadBlockchainData()
+    await loadweb3();
+    await this.loadBlockchainData();
   }
 
   //get the account
@@ -51,16 +51,17 @@ class PatientView extends Component {
     };
   }
 
-  async loadWeb3() {
-    if (window.ethereum){
-      window.web3= new Web3(window.ethereum)
-      await window.ethereum.enable()
-    } if(window.web3){
-      window.web3 = new Web3(window.web3.currentProvider)
-    }else {
-      window.alert('Please use metamask')
-    }
-  }
+  // async loadWeb3() {
+  //   if (window.ethereum){
+  //     window.web3= new Web3(window.ethereum)
+  //     await window.ethereum.enable()
+  //   } if(window.web3){
+  //     window.web3 = new Web3(window.web3.currentProvider)
+  //   }else {
+  //     window.alert('Please use metamask')
+  //   }
+  // }
+
   captureFile = (event) => {
     event.preventDefault()
     console.log('file captured..')
@@ -120,7 +121,7 @@ class PatientView extends Component {
     // const details = await contract.methods.setDetails("Jack Daniel", 35, 123412341234, "jack@jack.com",
     //                         9876543212, "Yemen road, Yemen", "A+", "Diabetes", "Yemen Hospital, R Hospital" ).call()
     const details = await contract.methods.getUserDetails(this.state.account).call()
-    console.log(details[Name]);
+    console.log(details);
   }
   
   onSubmit = async (event) =>{
