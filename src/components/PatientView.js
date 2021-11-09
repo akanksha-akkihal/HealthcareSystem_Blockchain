@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import { create} from 'ipfs-http-client';
-import document from '../abis/document1.json';
+import document from '../abis/patient.json';
 import Web3 from "web3";
 
 const ipfs = create('https://ipfs.infura.io:5001/api/v0')
@@ -11,6 +11,7 @@ class PatientView extends Component {
     await this.loadWeb3();
     await this.loadBlockchainData();
   }
+
 
   //get the account
   //get the network 
@@ -95,14 +96,7 @@ class PatientView extends Component {
 
 
   addDetails = async (event) => {
-    // const web3 = window.web3  
-
-    // const networkId = await web3.eth.net.getId()
     
-    // const networkData = document.networks[networkId]
-    // const abi = document.abi
-    // const address = networkData.address
-    // const contract = web3.eth.Contract(abi, address)
     this.state.contract.methods.setDetails("Jack Daniel", "35", "123412341234", "jack@jack.com",
     "9876543212", "Yemen road, Yemen", "A+", "Diabetes", "Yemen Hospital, R Hospital" )
     .send({ from: this.state.account }).then((r)=>{}).catch(err=>console.log(err))
@@ -139,13 +133,9 @@ class PatientView extends Component {
       }catch(e){
         console.log(e);
       }
-      //this.setState({...this.state,fileHash : [...this.state.fileHash , fileHash]})
-      //console.log(this.state.fileHash)
-      //step 2: store on blockchain
+      
       this.state.contract.methods.addDocument(fileHash).send({ from: this.state.account }).then((r)=>{
-        // console.log(file)
-        //this.setState({...this.state,fileHash : fileHash.push("https://ipfs.infura.io/ipfs/"+fileHash)})
-        this.setState({...this.state,fileHash : fileHash})
+        
       })
       .catch(err=>console.log(err))
 
@@ -177,56 +167,6 @@ class PatientView extends Component {
                   
                   <p>&nbsp;</p>
                   <h2>Upload medical records</h2>
-                  
-                    {/* <label htmlFor="username">username</label>
-                    <input id="username" type='text'/>
-                    <br/>
-                    <label htmlFor="email">email</label>
-                    <input id="email" type='text'/> */}
-
-
-
-                    {/* <form onSubmit={this.handleSubmit}>
-                      <label>
-                        Name:   
-                        <input type="text" value={this.state.username} onChange={this.handleChange} />
-                      </label>
-                      <label>
-                        Age:   
-                        <input type="text" value={this.state.username} onChange={this.handleChange} />
-                      </label>
-                      <label>
-                        Aadhar number:   
-                        <input type="text" value={this.state.username} onChange={this.handleChange} />
-                      </label>
-                      <label>
-                        Email:   
-                        <input type="text" value={this.state.username} onChange={this.handleChange} />
-                      </label>
-                      <label>
-                        Phone Number:   
-                        <input type="text" value={this.state.username} onChange={this.handleChange} />
-                      </label>
-                      <label>
-                        Address:   
-                        <input type="text" value={this.state.username} onChange={this.handleChange} />
-                      </label>
-                      <label>
-                        Blood group:   
-                        <input type="text" value={this.state.username} onChange={this.handleChange} />
-                      </label>
-                      <label>
-                        Health Conditions:   
-                        <input type="text" value={this.state.username} onChange={this.handleChange} />
-                      </label>
-                      <label>
-                        Hospitals visited:   
-                        <input type="text" value={this.state.username} onChange={this.handleChange} />
-                      </label>
-                      <input type="submit" value="Submit" />
-                    </form> */}
-
-
                   <button onClick={this.addDetails}>
                     Add details
                   </button>

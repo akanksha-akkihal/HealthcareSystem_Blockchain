@@ -1,4 +1,4 @@
-const document = artifacts.require("document1");
+const document = artifacts.require("patient");
 
 module.exports = function(deployer) {
   deployer.deploy(document);

@@ -2,16 +2,13 @@ pragma solidity >=0.4.21 <0.6.0;
 // pragma solidity >=0.7.0 <0.9.0;
 pragma experimental ABIEncoderV2;
 
-
-
-
-contract document1{
+contract patient{
 
     struct PatientDetails{
     
     string Name;
-    uint Age;
-    uint AadhaarNumber;
+    string Age;
+    string AadhaarNumber;
     string Email;
     string PhoneNumber;
     string Address;
@@ -32,7 +29,7 @@ contract document1{
 
     string[] emptyStringArray;
 
-    function setDetails(string memory _Name, uint _Age, uint _AadhaarNumber , string memory _Email , 
+    function setDetails(string memory _Name, string memory _Age, string memory _AadhaarNumber , string memory _Email , 
                         string memory _PhoneNumber , string memory _Address , string memory _BloodGroup, 
                         string memory _HealthConditions, string memory _HospitalsAttended) public {
         GroupOfPatients[msg.sender] = PatientDetails({
@@ -46,13 +43,12 @@ contract document1{
             HealthConditions: _HealthConditions,
             HospitalsAttended: _HospitalsAttended,
             FileHashes: emptyStringArray
-
             
         });
     }
 
     
-
+    
 
     //write function
     function addDocument(string memory _fileHash) public {

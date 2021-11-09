@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import LoginPage from './LoginPage'
 import PatientView from './PatientView'
+import DoctorView from './DoctorView'
 import {Switch, Route} from 'react-router-dom';
 import { BrowserRouter} from 'react-router-dom';
 
@@ -22,6 +23,9 @@ class App extends Component {
             </Route>
             <Route exact path="/patient">
               <PatientView/>
+            </Route>
+            <Route exact path="/doctor">
+              <DoctorView/>
             </Route>
           </Switch>
         </BrowserRouter>
