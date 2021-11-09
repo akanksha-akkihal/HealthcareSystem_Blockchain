@@ -8,6 +8,7 @@ pragma experimental ABIEncoderV2;
 contract document1{
 
     struct PatientDetails{
+    
     string Name;
     uint Age;
     uint AadhaarNumber;
@@ -17,8 +18,9 @@ contract document1{
     string BloodGroup;
     string HealthConditions;
     string HospitalsAttended;
-    string AdditionalDetails;
+    string[] FileHashes;
     }
+
 
     // PatientDetails[] public GroupOfPatients;
     // mapping (address => string[]) public documents;
@@ -28,10 +30,11 @@ contract document1{
 
     mapping (address => PatientDetails) public GroupOfPatients;
 
+    string[] emptyStringArray;
 
     function setDetails(string memory _Name, uint _Age, uint _AadhaarNumber , string memory _Email , 
                         string memory _PhoneNumber , string memory _Address , string memory _BloodGroup, 
-                        string memory _HealthCondtions, string memory _HospitalsAttended, string memory _AdditionalDetails) public {
+                        string memory _HealthConditions, string memory _HospitalsAttended) public {
         GroupOfPatients[msg.sender] = PatientDetails({
             Name: _Name,
             Age: _Age,
@@ -40,17 +43,21 @@ contract document1{
             PhoneNumber: _PhoneNumber,
             Address: _Address,
             BloodGroup: _BloodGroup,
-            HealthConditions: _HealthCondtions,
+            HealthConditions: _HealthConditions,
             HospitalsAttended: _HospitalsAttended,
-            AdditionalDetails: _AdditionalDetails
+            FileHashes: emptyStringArray
+
+            
         });
     }
 
+    
+
+
     //write function
-    // function addDocument(string memory _fileHash) public {
-    //     address from = msg.sender;
-    //     documents[from].push(_fileHash);
-    // }
+    function addDocument(string memory _fileHash) public {
+        GroupOfPatients[msg.sender].FileHashes.push(_fileHash);
+    }
 
     // function addUserDetails(string memory _username) public {
     //     address from = msg.sender;
@@ -59,9 +66,9 @@ contract document1{
 
 
     //read function
-    // function getDocuments(address user) public view returns(string[] memory){
-    //     return documents[user];
-    // }
+    function getDocuments(address user) public view returns(string[] memory){
+        return GroupOfPatients[user].FileHashes;
+    }
 
     function getUserDetails(address user) public view returns(PatientDetails memory){
         return GroupOfPatients[user];
