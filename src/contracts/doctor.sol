@@ -10,7 +10,8 @@ contract doctor{
         string Email;
         string PhoneNumber;
         string Address; 
-        string Hospitals;    
+        string Hospitals;
+        bool isValue;
     }
    
 
@@ -23,11 +24,21 @@ contract doctor{
             Email: _Email,
             PhoneNumber: _PhoneNumber,
             Address: _Address,            
-            Hospitals: _Hospitals           
+            Hospitals: _Hospitals,
+            isValue: true         
         });
     }
 
     function getDoctorDetails(address user) public view returns(DoctorDetails memory){
         return DoctorsList[user];
     }
+
+    function Exists(address user) public view returns(bool exists) {
+        if(DoctorsList[user].isValue == true) return true;
+        return false;
+    }
+
+
+
+
 }

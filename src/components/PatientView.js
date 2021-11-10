@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import { create} from 'ipfs-http-client';
-import document from '../abis/patient.json';
+import patient from '../abis/patient.json';
 import Web3 from "web3";
 
 const ipfs = create('https://ipfs.infura.io:5001/api/v0')
@@ -9,7 +9,9 @@ class PatientView extends Component {
 //   render(){ return  (<div>Hello world</div>)}
   async componentDidMount(){
     await this.loadWeb3();
-    await this.loadBlockchainData();
+    await this.loadContract();
+    // await this.loadPatientdetails()
+
   }
 
 
@@ -19,7 +21,7 @@ class PatientView extends Component {
   //get the filehash
 
   
-  async loadBlockchainData(){
+  async loadContract(){
     const web3 = window.web3
     const accounts = await web3.eth.getAccounts()
     console.log(accounts)
@@ -27,28 +29,35 @@ class PatientView extends Component {
     this.setState({...this.state,account: accounts[0]})
     const networkId = await web3.eth.net.getId()
     
-    const networkData = document.networks[networkId]
+    const networkData = patient.networks[networkId]
     if(networkData){
       //fetch contract
-      const abi = document.abi
+      const abi = patient.abi
       const address = networkData.address
       const contract = web3.eth.Contract(abi, address)
       this.setState({contract})
-      const fileHash = await contract.methods.getDocuments(this.state.account).call()
-      console.log(fileHash)
-      this.setState({...this.state,fileHash : fileHash})
-      console.log(this.state.fileHash)
+      
     }else{
       window.alert('Smart Contract not deployed to detected network')
     }
   }
+
+  async loadPatientdetails(){
+    const patientDetails = await this.state.contract.methods.getPatientDetails(this.state.account).call()
+    this.setState({...this.state,patientDetails:patientDetails})
+
+    const fileHash = await this.state.contract.methods.getDocuments(this.state.account).call()
+    this.setState({...this.state,fileHash : fileHash})
+  }
+
   constructor(props){
     super(props);
     this.state = {
       account: '',
       buffer : null,
       contract: null,
-      fileHash: []
+      fileHash: [],
+      patientDetails: null,
     };
   }
 
@@ -108,13 +117,13 @@ class PatientView extends Component {
 
     const networkId = await web3.eth.net.getId()
     
-    const networkData = document.networks[networkId]
-    const abi = document.abi
+    const networkData = patient.networks[networkId]
+    const abi = patient.abi
     const address = networkData.address
     const contract = web3.eth.Contract(abi, address)
     // const details = await contract.methods.setDetails("Jack Daniel", 35, 123412341234, "jack@jack.com",
     //                         9876543212, "Yemen road, Yemen", "A+", "Diabetes", "Yemen Hospital, R Hospital" ).call()
-    const details = await contract.methods.getUserDetails(this.state.account).call()
+    const details = await contract.methods.getPatientDetails(this.state.account).call()
     console.log(details);
   }
   
@@ -182,6 +191,17 @@ class PatientView extends Component {
                     <br/>
                     <br/>        
                   </form>
+
+                  {/* <ul>
+                    {this.state.doctorDetails.map((details)=>(
+                      <li key={details}>
+                        <h4>{details}</h4>
+                        <br/>
+                      </li>
+                    ))}
+                  </ul> */}
+
+                  
                   <ul>
                     {this.state.fileHash.map((fileUrl)=>(
                       <li key={fileUrl}>

@@ -16,18 +16,13 @@ contract patient{
     string HealthConditions;
     string HospitalsAttended;
     string[] FileHashes;
+    bool isValue;
     }
-
-
-    // PatientDetails[] public GroupOfPatients;
-    // mapping (address => string[]) public documents;
-    // mapping (address => string[]) public username;
-
-    // mapping(address => mapping(string => string)) details;
 
     mapping (address => PatientDetails) public GroupOfPatients;
 
     string[] emptyStringArray;
+    
 
     function setDetails(string memory _Name, string memory _Age, string memory _AadhaarNumber , string memory _Email , 
                         string memory _PhoneNumber , string memory _Address , string memory _BloodGroup, 
@@ -42,7 +37,8 @@ contract patient{
             BloodGroup: _BloodGroup,
             HealthConditions: _HealthConditions,
             HospitalsAttended: _HospitalsAttended,
-            FileHashes: emptyStringArray
+            FileHashes: emptyStringArray,
+            isValue: true
             
         });
     }
@@ -55,18 +51,20 @@ contract patient{
         GroupOfPatients[msg.sender].FileHashes.push(_fileHash);
     }
 
-    // function addUserDetails(string memory _username) public {
-    //     address from = msg.sender;
-    //     username[from].push(_username);
-    // }
-
 
     //read function
     function getDocuments(address user) public view returns(string[] memory){
         return GroupOfPatients[user].FileHashes;
     }
 
-    function getUserDetails(address user) public view returns(PatientDetails memory){
+    function getPatientDetails(address user) public view returns(PatientDetails memory){
         return GroupOfPatients[user];
     }
+
+    function Exists(address user) public view returns(bool exists) {
+        if(GroupOfPatients[user].isValue == true) return true;
+        return false;
+    }
+
+    
 }
