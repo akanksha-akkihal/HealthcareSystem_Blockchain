@@ -10,7 +10,7 @@ class PatientView extends Component {
   async componentDidMount(){
     await this.loadWeb3();
     await this.loadContract();
-    // await this.loadPatientdetails()
+    await this.loadPatientdetails()
 
   }
 
@@ -46,6 +46,7 @@ class PatientView extends Component {
     const patientDetails = await this.state.contract.methods.getPatientDetails(this.state.account).call()
     this.setState({...this.state,patientDetails:patientDetails})
 
+    this.setState({...this.state,Name:patientDetails.Name})
     const fileHash = await this.state.contract.methods.getDocuments(this.state.account).call()
     this.setState({...this.state,fileHash : fileHash})
   }
@@ -58,6 +59,7 @@ class PatientView extends Component {
       contract: null,
       fileHash: [],
       patientDetails: null,
+      Name: null,
     };
   }
 
@@ -121,8 +123,7 @@ class PatientView extends Component {
     const abi = patient.abi
     const address = networkData.address
     const contract = web3.eth.Contract(abi, address)
-    // const details = await contract.methods.setDetails("Jack Daniel", 35, 123412341234, "jack@jack.com",
-    //                         9876543212, "Yemen road, Yemen", "A+", "Diabetes", "Yemen Hospital, R Hospital" ).call()
+    
     const details = await contract.methods.getPatientDetails(this.state.account).call()
     console.log(details);
   }
@@ -160,21 +161,30 @@ class PatientView extends Component {
   render() {
     return (
         <div>
+          {/* {console.log(this.state.patientDetails)} */}
           <nav className="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
             
             <h2 style = {{color : "white"}}> Medi Records</h2> 
             <ul className="navbar-nav px-3">
               <li className="nav-item text-nowrap d-none d-sm-none d-sm-block">
+                <small className="text-white">{this.state.Name} </small>
+                
                 <small className="text-white">{this.state.account}</small>
               </li>
             </ul>
           </nav>
           <div className="container-fluid mt-5">
             <div className="row">
-              <main role="main" className="col-lg-12 d-flex text-center">
-                <div className="content mr-auto ml-auto">
-                  
+              
+              <main role="main" className="col-lg-12 d-flex text-centre">  
+                              
+                <div className="content mr-auto ml-auto">                 
                   <p>&nbsp;</p>
+                  <div className="align-self-start"> 
+                    <h1>Hi {this.state.Name}!</h1>           
+                  </div> 
+                  
+                   
                   <h2>Upload medical records</h2>
                   <button onClick={this.addDetails}>
                     Add details
