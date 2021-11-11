@@ -104,23 +104,30 @@ class LoginPage extends Component{
         {this.state.doctorExists ? <Redirect to='/doctor'/> : null}
         <nav className="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
           
-          <h2 style = {{color : "white"}}> Medi Records</h2> 
+          <h2 id="navbarheading"> Medi Records</h2> 
           
         </nav>
         <br/><br/>
         <div className="container-fluid mt-5">
           <div className="row">
-            <main role="main" className="col-lg-12 d-flex text-center">
-              <div className="content mr-auto ml-auto">
-              
+            <div>
+              <h2 style={{paddingLeft:"10px"}}>Store all your medical data on blockchain securely.</h2>
+            </div>
+            <main role="main" className="col-lg-12 d-flex">
+            
+              <div className="content mr-auto">
+                <div>
+                  <br/>
+                  <h4>Login using metamask</h4>
+                </div>
                 <div>
                   {!this.state.showComponentD ?<button onClick={this._onButtonClickP}>
                     Patient
                   </button>: null}
                   {this.state.showComponentP ?<div><br/><PatientLogin/></div> :null}
-                </div>
-                <br/><br/>
-                <div>
+                
+                  &nbsp;&nbsp;&nbsp;
+
                   {!this.state.showComponentP ?<button onClick={this._onButtonClickD}>
                     Doctor
                   </button>: null}
