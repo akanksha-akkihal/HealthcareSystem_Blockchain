@@ -111,27 +111,27 @@ class PatientView extends Component {
 
 
 
-  addDetails = async (event) => {
+  // addDetails = async (event) => {
     
-    this.state.contract.methods.setDetails("Jack Daniel", "35", "123412341234", "jack@jack.com",
-    "9876543212", "Yemen road, Yemen", "A+", "Diabetes", "Yemen Hospital, R Hospital" )
-    .send({ from: this.state.account }).then((r)=>{}).catch(err=>console.log(err))
+  //   this.state.contract.methods.setDetails("Jack Daniel", "35", "123412341234", "jack@jack.com",
+  //   "9876543212", "Yemen road, Yemen", "A+", "Diabetes", "Yemen Hospital, R Hospital" )
+  //   .send({ from: this.state.account }).then((r)=>{}).catch(err=>console.log(err))
     
-  }
+  // }
 
-  showDetails = async (event) => {
-    const web3 = window.web3  
+  // showDetails = async (event) => {
+  //   const web3 = window.web3  
 
-    const networkId = await web3.eth.net.getId()
+  //   const networkId = await web3.eth.net.getId()
     
-    const networkData = patient.networks[networkId]
-    const abi = patient.abi
-    const address = networkData.address
-    const contract = web3.eth.Contract(abi, address)
+  //   const networkData = patient.networks[networkId]
+  //   const abi = patient.abi
+  //   const address = networkData.address
+  //   const contract = web3.eth.Contract(abi, address)
     
-    const details = await contract.methods.getPatientDetails(this.state.account).call()
-    console.log(details);
-  }
+  //   const details = await contract.methods.getPatientDetails(this.state.account).call()
+  //   console.log(details);
+  // }
   
   onSubmit = async (event) =>{
     event.preventDefault();
@@ -192,12 +192,12 @@ class PatientView extends Component {
                 </div>
                 <div className="content mr-auto ml-auto" style={{paddingTop:"20px"}}>
                   <h2>Upload medical records</h2>
-                  <button onClick={this.addDetails}>
+                  {/* <button onClick={this.addDetails}>
                     Add details
                   </button>
                   <button onClick={this.showDetails}>
                     Show Details
-                  </button>
+                  </button> */}
                   <form onSubmit={this.onSubmit}>
                     <br/>
                     <input align= "centre" type='file' onChange={this.captureFile}/>
