@@ -6,11 +6,11 @@ import Web3 from "web3";
 
 const ipfs = create('https://ipfs.infura.io:5001/api/v0')
 class PatientView extends Component {
-//   render(){ return  (<div>Hello world</div>)}
+
   async componentDidMount(){
     await this.loadWeb3();
     await this.loadContract();
-    // await this.loadPatientdetails()
+    await this.loadPatientdetails()
 
   }
 
@@ -44,7 +44,13 @@ class PatientView extends Component {
 
   async loadPatientdetails(){
     const patientDetails = await this.state.contract.methods.getPatientDetails(this.state.account).call()
-    this.setState({...this.state,patientDetails:patientDetails})
+    var i=0
+    const detailsArray=[]
+    while(i<9){
+      detailsArray[i]=patientDetails[i]
+      i++
+    }
+    this.setState({...this.state,patientDetails:detailsArray})
 
     const fileHash = await this.state.contract.methods.getDocuments(this.state.account).call()
     this.setState({...this.state,fileHash : fileHash})
@@ -57,7 +63,7 @@ class PatientView extends Component {
       buffer : null,
       contract: null,
       fileHash: [],
-      patientDetails: null,
+      patientDetails: [],
     };
   }
 
@@ -165,7 +171,8 @@ class PatientView extends Component {
             <h2 style = {{color : "white"}}> Medi Records</h2> 
             <ul className="navbar-nav px-3">
               <li className="nav-item text-nowrap d-none d-sm-none d-sm-block">
-                <small className="text-white">{this.state.account}</small>
+                <small className="text-white">{this.state.patientDetails[0]}</small>
+          
               </li>
             </ul>
           </nav>
@@ -174,6 +181,17 @@ class PatientView extends Component {
               <main role="main" className="col-lg-12 d-flex text-center">
                 <div className="content mr-auto ml-auto">
                   
+                  <div>
+                    <h4>Name : {this.state.patientDetails[0]}</h4>
+                    <h4>Age : {this.state.patientDetails[1]}</h4>
+                    <h4>Aadhar number: {this.state.patientDetails[2]}</h4>
+                    <h4>Email : {this.state.patientDetails[3]}</h4>
+                    <h4>Phone no. : {this.state.patientDetails[4]}</h4>
+                    <h4>Address : {this.state.patientDetails[5]}</h4>
+                    <h4>BloodGroup : {this.state.patientDetails[6]}</h4>
+                    <h4>Health condition : {this.state.patientDetails[7]}</h4>
+                    <h4>Hospitals : {this.state.patientDetails[8]}</h4>
+                  </div>
                   <p>&nbsp;</p>
                   <h2>Upload medical records</h2>
                   <button onClick={this.addDetails}>
@@ -191,17 +209,6 @@ class PatientView extends Component {
                     <br/>
                     <br/>        
                   </form>
-
-                  {/* <ul>
-                    {this.state.doctorDetails.map((details)=>(
-                      <li key={details}>
-                        <h4>{details}</h4>
-                        <br/>
-                      </li>
-                    ))}
-                  </ul> */}
-
-                  
                   <ul>
                     {this.state.fileHash.map((fileUrl)=>(
                       <li key={fileUrl}>
