@@ -192,6 +192,8 @@ class PatientView extends Component {
                 </div>
                 <div className="content mr-auto ml-auto" style={{paddingTop:"20px"}}>
                   <h2>Upload medical records</h2>
+
+                  {/* use for testing */}
                   {/* <button onClick={this.addDetails}>
                     Add details
                   </button>
