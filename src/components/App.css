@@ -1,1 +1,20 @@
-/* Styles go here */
+#content{
+    padding-left: 10px;
+    /* text-align: center; */
+  }
+
+#patientcontent{
+    padding-top: 20px;
+    padding-left:80px;
+}
+
+#navbarheading{
+    color: aliceblue; 
+    padding-left: 10px;
+}
+
+#doctorheading{
+    padding-top: 55px;
+
+}
+

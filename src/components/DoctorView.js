@@ -35,7 +35,13 @@ class DoctorView extends Component {
 
   async loadDoctordetails(){
     const doctorDetails = await this.state.contract.methods.getDoctorDetails(this.state.account).call()
-    this.setState({...this.state,doctorDetails:doctorDetails})
+    var i=0
+    const detailsArray=[]
+    while(i<5){
+      detailsArray[i]=doctorDetails[i]
+      i++
+    }
+    this.setState({...this.state,doctorDetails:detailsArray})
   }
 
   constructor(props){
@@ -43,7 +49,7 @@ class DoctorView extends Component {
     this.state = {
       account: '',
       contract: null,
-      doctorDetails: null,
+      doctorDetails: []
     };
   }
 
@@ -62,25 +68,25 @@ class DoctorView extends Component {
 
   render() {
     return (
-      <div>
+      <div> 
         <nav className="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-      
-          <h2 style = {{color : "white"}}> Medi Records</h2> 
+          <h2 id = "navbarheading" >Medi Records</h2> 
           <ul className="navbar-nav px-3">
             <li className="nav-item text-nowrap d-none d-sm-none d-sm-block">
-              <small className="text-white">{this.state.account}</small>
+              <small className="text-white">{this.state.doctorDetails[0]}</small>
             </li>
           </ul>
         </nav>
-
-        {/* <ul>
-          {this.state.doctorDetails.map((details)=>(
-            <li key={details}>
-              <h4>{details}</h4>
-              <br/>
-            </li>
-          ))}
-        </ul> */}
+        <div id="doctorheading"><h2 style={{textAlign:"center"}}>Doctor Profile</h2></div>
+        <div id = "content">
+          <h4>Name : {this.state.doctorDetails[0]}</h4>
+          <h4>Email : {this.state.doctorDetails[1]}</h4>
+          <h4>Phone number : {this.state.doctorDetails[2]}</h4>
+          <h4>Address : {this.state.doctorDetails[3]}</h4>
+          <h4>Hospitals : {this.state.doctorDetails[4]}</h4>
+        </div>
+        
+        
 
 
       </div>
