@@ -49,7 +49,7 @@ class DoctorLogin extends Component{
     onSubmit = (event) => {
         event.preventDefault();
         this.state.contract.methods.setDetailsDoctor(event.target[0].value, event.target[1].value,event.target[2].value,
-            event.target[3].value,event.target[4].value)
+            event.target[3].value,event.target[4].value,this.state.account)
         .send({ from: this.state.account }).then((r)=>{}).catch(err=>console.log(err))
     }
 

@@ -1,6 +1,7 @@
 pragma solidity >=0.4.21 <0.6.0;
 // pragma solidity >=0.7.0 <0.9.0;
 pragma experimental ABIEncoderV2;
+import './doctor.sol';
 
 contract patient{
 
@@ -66,5 +67,31 @@ contract patient{
         return false;
     }
 
+
     
+    
+    // contract CalledContract {
+    //         function doSomething() public {
+    //     }
+    // }
+
+    // contract CallerContract {
+    //     function callAnotherContract(address addr) external {
+    //         CalledContract called = CalledContract(addr);
+    //         called.doSomething();
+    //     }
+    // }
+
+    // function callAnotherContract(address addr) external {
+    //     doctor called = doctor(addr);
+    //     called.doSomething();
+    // }
+
+    // function test(address addr) public view returns(string memory){
+    //     doctor called = doctor(addr);
+    //     return called.getDoctorsList();
+    // }
+
+
+
 }

@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import './App.css';
 import { create} from 'ipfs-http-client';
 import patient from '../abis/patient.json';
+import doctor from '../abis/doctor.json';
 import Web3 from "web3";
+import { file } from '@babel/types';
 
 const ipfs = create('https://ipfs.infura.io:5001/api/v0')
 class PatientView extends Component {
@@ -19,17 +21,19 @@ class PatientView extends Component {
   //get the network 
   //get the smartcontract --> abi -->address
   //get the filehash
+  
 
   
   async loadContract(){
     const web3 = window.web3
     const accounts = await web3.eth.getAccounts()
-    console.log(accounts)
+    console.log(typeof(accounts[0]))
     // username
     this.setState({...this.state,account: accounts[0]})
     const networkId = await web3.eth.net.getId()
     
     const networkData = patient.networks[networkId]
+    const networkDataDoctor = doctor.networks[networkId]
     if(networkData){
       //fetch contract
       const abi = patient.abi
@@ -38,13 +42,26 @@ class PatientView extends Component {
       this.setState({contract})
       
     }else{
-      window.alert('Smart Contract not deployed to detected network')
+      window.alert('Smart Contract for patient not deployed to detected network')
     }
+
+    if(networkDataDoctor){
+      //fetch contract
+      const abi = doctor.abi
+      const address = networkDataDoctor.address
+      const contractDoctor = web3.eth.Contract(abi, address)
+      this.setState({contractDoctor})
+      
+    }else{
+      window.alert('Smart Contract for doctor not deployed to detected network')
+    }
+
   }
 
   async loadPatientdetails(){
     const patientDetails = await this.state.contract.methods.getPatientDetails(this.state.account).call()
     var i=0
+    console.log(typeof(this.state.account))
     const detailsArray=[]
     while(i<9){
       detailsArray[i]=patientDetails[i]
@@ -54,7 +71,31 @@ class PatientView extends Component {
 
     this.setState({...this.state,Name:patientDetails.Name})
     const fileHash = await this.state.contract.methods.getDocuments(this.state.account).call()
-    this.setState({...this.state,fileHash : fileHash})
+    this.setState({...this.state,fileHash : fileHash})    
+    this.setState({...this.state, checkedState:new Array(fileHash.length).fill(false)})
+    // console.log(this.state.checkedState)
+    
+    const doctorsList = await this.state.contractDoctor.methods.getDoctorsList().call()
+    this.setState({...this.state, doctorsList:doctorsList,selectedDoctorID:doctorsList[0]})
+
+    console.log(this.state.doctorsList)
+    var doctorNames = await this.state.contractDoctor.methods.getDoctorsNames().call()
+    this.setState({...this.state, doctorNames:doctorNames, selectedDoctor:doctorNames[0]})   
+    console.log(this.state.doctorNames)
+
+    // var result=[]
+    // var result = doctorsList.reduce(function (result, field, index) {
+    //   result[doctorNames[index]] = field;
+    //   this.setState({...this.state, mappedDoctors:result})
+    // }, {})
+
+    var r = {}
+    for (let i = 0; i < doctorNames.length; i++) {
+      r[doctorNames[i]] = doctorsList[i];
+    }
+    this.setState({...this.state, mappedDoctors:r})
+    console.log(this.state.doctorsList)  
+
   }
 
   constructor(props){
@@ -63,10 +104,22 @@ class PatientView extends Component {
       account: '',
       buffer : null,
       contract: null,
+      contractDoctor: null,
       fileHash: [],
       patientDetails: [],
+      checkedState: [],
+      doctorsList:[],
+      doctorNames:[],
+      mappedDoctors:[],
+      selectedDoctor: null,
+      selectedDoctorID:null
     };
+
+    this.handleCheckbox = this.handleOnChange.bind(this);
+    this.handleDoctorChange = this.handleDoctorChange.bind(this)
   }
+
+  
 
   async loadWeb3() {
     if (window.ethereum){
@@ -109,29 +162,54 @@ class PatientView extends Component {
     event.preventDefault();
   }
 
+  
 
+  handleOnChange(position){
+    
+    const updatedCheckedState = this.state.checkedState.map((item, index) =>
+      index === position ? !item : item
+    );
 
-  // addDetails = async (event) => {
+    this.setState({...this.state, checkedState: updatedCheckedState})
+    // console.log(this.state.checkedState);
     
-  //   this.state.contract.methods.setDetails("Jack Daniel", "35", "123412341234", "jack@jack.com",
-  //   "9876543212", "Yemen road, Yemen", "A+", "Diabetes", "Yemen Hospital, R Hospital" )
-  //   .send({ from: this.state.account }).then((r)=>{}).catch(err=>console.log(err))
     
-  // }
+  };
 
-  // showDetails = async (event) => {
-  //   const web3 = window.web3  
+  grant= async (event)=>{
+    var granted_files = new Array()
+    var checked = this.state.checkedState
+    var files=this.state.fileHash
+    for(var i=0;i<files.length;i++){
+      if(checked[i]===true){
+        granted_files.push(files[i])
+      }
+    }
+    this.setState({...this.state, checkedState:new Array(this.state.fileHash.length).fill(false)})
+    console.log(granted_files)
+    
+    console.log("this is selected d id" ,this.state.mappedDoctors[this.state.selectedDoctor])
+    
+    
+    this.state.contractDoctor.methods.getGrant(granted_files,this.state.account,this.state.patientDetails[0],
+      this.state.patientDetails[1],this.state.patientDetails[4],this.state.patientDetails[6],this.state.patientDetails[7],
+      this.state.patientDetails[8],this.state.mappedDoctors[this.state.selectedDoctor] ).call().then(()=>{console.log("Access granted")})
+    
 
-  //   const networkId = await web3.eth.net.getId()
     
-  //   const networkData = patient.networks[networkId]
-  //   const abi = patient.abi
-  //   const address = networkData.address
-  //   const contract = web3.eth.Contract(abi, address)
-    
-  //   const details = await contract.methods.getPatientDetails(this.state.account).call()
-  //   console.log(details);
-  // }
+  }
+
+  handleDoctorChange(e){
+
+    this.setState({...this.state, selectedDoctor:e.target.value},()=>{console.log(this.state.selectedDoctor)})
+    // for(var k=0;k<this.state.doctorNames.length;k++){
+    //   if(this.state.doctorNames[k]===this.state.selectedDoctor){
+    //     this.setState({...this.state, selectedDoctorID:this.state.doctorsList[k]})
+    //     break
+    //   }
+    // }    
+
+  }
   
   onSubmit = async (event) =>{
     event.preventDefault();
@@ -153,14 +231,20 @@ class PatientView extends Component {
         
       })
       .catch(err=>console.log(err))
-
-      
-      
+    
     }
     else{
       alert("No files submitted.Try again")
     }
 
+  }
+
+  testingButton= async (event)=>{
+    console.log("here")
+    console.log(this.state.mappedDoctors[this.state.selectedDoctor])
+    // var a = this.state.contractDoctor.methods.getPatientDetails(this.state.mappedDoctors[this.state.selectedDoctor]).call()
+    var a = this.state.contractDoctor.methods.getPatientDetails("0x9F941ad274Addf70ac70648e6d57884502692AD9").call()
+    console.log(a);
   }
 
   render() {
@@ -209,22 +293,38 @@ class PatientView extends Component {
                     <br/>
                     <br/>        
                   </form>
+                  
                   <ul>
-                    {this.state.fileHash.map((fileUrl)=>(
-                      <li key={fileUrl}>
-                        <img src={`https://ipfs.infura.io/ipfs/${fileUrl}`} height="200" width="300"className="App-logo" alt="document" />
+                    {this.state.fileHash.map((fileUrl,index)=>(
+                      <li key={index}>
+                        <input name="isGoing" 
+                          type="checkbox" 
+                          checked={this.state.checkedState[index]} 
+                          onChange={() => this.handleOnChange(index)}/>
+                        <label htmlFor={`custom-checkbox-${index}`}><img src={`https://ipfs.infura.io/ipfs/${fileUrl}`} height="200" width="300"className="App-logo" alt="document" /></label>
                         <br/>
                         <br/>
                       </li>
                     ))}
                   </ul>
+                  <label htmlFor="SelectDoctor">Select Doctor </label>
+                  <br/>
+                  <select id = "SelectDoctor" value={this.state.selectedDoctor} onChange={this.handleDoctorChange}>
+                      {this.state.doctorNames.map((name)=>(                        
+                        <option key={name} value={name}>{name}</option>                       
+                      ))}           
+                  </select>
+                  <br/>
+                  <button type="submit" onClick={this.grant}>Grant Access</button>
                 </div>
               </main>
             </div>
           </div>
+          <button onClick={this.testingButton}>Test</button>
         </div>
       );
   }
 }
 
 export default PatientView;
+

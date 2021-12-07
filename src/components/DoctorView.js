@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Web3 from "web3";
 import doctor from '../abis/doctor.json';
+import patient from '../abis/patient.json';
 
 class DoctorView extends Component {
     //   render(){ return  (<div>Hello world</div>)}
@@ -19,12 +20,24 @@ class DoctorView extends Component {
     const networkId = await web3.eth.net.getId()
     
     const networkData = doctor.networks[networkId]
+    const networkDataPatient = patient.networks[networkId]
     if(networkData){
       //fetch contract
       const abi = doctor.abi
       const address = networkData.address
       const contract = web3.eth.Contract(abi, address)
       this.setState({contract})
+      
+    }else{
+      window.alert('Smart Contract not deployed to detected network')
+    }
+
+    if(networkDataPatient){
+      //fetch contract
+      const abi = patient.abi
+      const address = networkDataPatient.address
+      const contractPatient = web3.eth.Contract(abi, address)
+      this.setState({contractPatient})
       
     }else{
       window.alert('Smart Contract not deployed to detected network')
@@ -42,6 +55,14 @@ class DoctorView extends Component {
       i++
     }
     this.setState({...this.state,doctorDetails:detailsArray})
+
+    const doctorsList = await this.state.contract.methods.getDoctorsList().call()
+    console.log(doctorsList);
+
+    
+    // const patientdetailsretrieved = this.state.contract.methods.getPatientDetails(this.state.account).call();
+    // console.log(patientdetailsretrieved)
+
   }
 
   constructor(props){
@@ -49,6 +70,7 @@ class DoctorView extends Component {
     this.state = {
       account: '',
       contract: null,
+      contractPatient: null,
       doctorDetails: []
     };
   }
@@ -63,7 +85,12 @@ class DoctorView extends Component {
       window.alert('Please use metamask')
     }
   }
-      
+   
+  testingButton= async (event)=>{
+    console.log("here")
+    const patientdetailsretrieved = this.state.contract.methods.getPatientDetails(String(this.state.account)).call();
+    console.log(patientdetailsretrieved)
+  }
   
 
   render() {
@@ -85,10 +112,7 @@ class DoctorView extends Component {
           <h4>Address : {this.state.doctorDetails[3]}</h4>
           <h4>Hospitals : {this.state.doctorDetails[4]}</h4>
         </div>
-        
-        
-
-
+        <button onClick={this.testingButton}>Test</button>
       </div>
     );
   }
