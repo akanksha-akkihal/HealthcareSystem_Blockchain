@@ -58,11 +58,16 @@ class DoctorView extends Component {
 
     const doctorsList = await this.state.contract.methods.getDoctorsList().call()
     console.log(doctorsList);
-
-    
+    var patients = this.state.contract.methods.getPatientDetails(String(this.state.account)).call();
+    var res=[]
     // const patientdetailsretrieved = this.state.contract.methods.getPatientDetails(this.state.account).call();
-    // console.log(patientdetailsretrieved)
-
+    await patients.then(function(result){
+      res=result
+    })
+    this.setState({...this.state,patientdetailsretrieved: res},()=>{
+      console.log(this.state.patientdetailsretrieved)
+    })
+    
   }
 
   constructor(props){
@@ -71,7 +76,8 @@ class DoctorView extends Component {
       account: '',
       contract: null,
       contractPatient: null,
-      doctorDetails: []
+      doctorDetails: [],
+      patientdetailsretrieved: []
     };
   }
 
@@ -104,15 +110,44 @@ class DoctorView extends Component {
             </li>
           </ul>
         </nav>
-        <div id="doctorheading"><h2 style={{textAlign:"center"}}>Doctor Profile</h2></div>
-        <div id = "content">
-          <h4>Name : {this.state.doctorDetails[0]}</h4>
-          <h4>Email : {this.state.doctorDetails[1]}</h4>
-          <h4>Phone number : {this.state.doctorDetails[2]}</h4>
-          <h4>Address : {this.state.doctorDetails[3]}</h4>
-          <h4>Hospitals : {this.state.doctorDetails[4]}</h4>
-        </div>
-        <button onClick={this.testingButton}>Test</button>
+        
+        <div className="container-fluid mt-5">
+            <div className="row">
+              <main role="main" className="col-lg-12 d-flex text-left">
+                
+                <div id = "doctorcontent">
+                  <h2 style={{textAlign:"center"},{paddingTop:"20px"}}>Doctor Profile</h2>
+                  <br/>
+                  <h4>Name : {this.state.doctorDetails[0]}</h4>
+                  <h4>Email : {this.state.doctorDetails[1]}</h4>
+                  <h4>Phone number : {this.state.doctorDetails[2]}</h4>
+                  <h4>Address : {this.state.doctorDetails[3]}</h4>
+                  <h4>Hospitals : {this.state.doctorDetails[4]}</h4>
+                </div>
+                <div className="content mr-auto ml-auto" >
+                  <h2 style={{paddingTop:"20px"}}>Patient Records</h2>
+                  <br/>
+                  <ul>
+                    {this.state.patientdetailsretrieved.map((patient,index)=>(
+                      <li key={index}>
+                        <ul>
+                          {patient.map((details,i)=>(
+                            <ul key={i}>
+                              {i!=0 && i<7 ?(<h6>{details}</h6>):(<img src={`https://ipfs.infura.io/ipfs/${details}`} height="200" width="300"className="App-logo" alt={`Patient-${i+1}`} />)
+                                
+                              }
+                              
+                            </ul>
+                          ))}
+                        </ul>
+                        
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </main>
+            </div>
+          </div> 
       </div>
     );
   }

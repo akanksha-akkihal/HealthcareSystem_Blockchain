@@ -175,6 +175,15 @@ class PatientView extends Component {
     
     
   };
+  confirmSelection = async(event)=>{
+    for(var k=0;k<this.state.doctorNames.length;k++){
+      if(this.state.doctorNames[k]===this.state.selectedDoctor){
+        this.setState({...this.state, selectedDoctorID:this.state.doctorsList[k]})
+        break
+      }
+    }  
+    console.log(this.state.selectedDoctorID)
+  }
 
   grant= async (event)=>{
     var granted_files = new Array()
@@ -185,21 +194,25 @@ class PatientView extends Component {
         granted_files.push(files[i])
       }
     }
-    this.setState({...this.state, checkedState:new Array(this.state.fileHash.length).fill(false)})
-    console.log(granted_files)
+    // this.setState({...this.state, checkedState:new Array(this.state.fileHash.length).fill(false)})
+    // console.log(granted_files)
     
-    console.log("this is selected d id" ,this.state.mappedDoctors[this.state.selectedDoctor])
+    // console.log("this is selected d id" ,this.state.mappedDoctors[this.state.selectedDoctor])
     
     
-    this.state.contractDoctor.methods.getGrant(granted_files,this.state.account,this.state.patientDetails[0],
+    await this.state.contractDoctor.methods.getGrant(granted_files,this.state.account,this.state.patientDetails[0],
       this.state.patientDetails[1],this.state.patientDetails[4],this.state.patientDetails[6],this.state.patientDetails[7],
-      this.state.patientDetails[8],this.state.mappedDoctors[this.state.selectedDoctor] ).call().then(()=>{console.log("Access granted")})
+      this.state.patientDetails[8],this.state.selectedDoctorID).send({ from: this.state.account }).then(()=>{console.log("Access granted")})
+
+    // this.state.contractDoctor.methods.getGrant(granted_files,this.state.account,this.state.patientDetails[0],
+    //   this.state.patientDetails[1],this.state.patientDetails[4],this.state.patientDetails[6],this.state.patientDetails[7],
+    //   this.state.patientDetails[8],this.state.mappedDoctors[this.state.selectedDoctor] ).call().then(()=>{console.log("Access granted")})
     
 
     
   }
 
-  handleDoctorChange(e){
+  handleDoctorChange=async(e)=>{
 
     this.setState({...this.state, selectedDoctor:e.target.value},()=>{console.log(this.state.selectedDoctor)})
     // for(var k=0;k<this.state.doctorNames.length;k++){
@@ -243,7 +256,7 @@ class PatientView extends Component {
     console.log("here")
     console.log(this.state.mappedDoctors[this.state.selectedDoctor])
     // var a = this.state.contractDoctor.methods.getPatientDetails(this.state.mappedDoctors[this.state.selectedDoctor]).call()
-    var a = this.state.contractDoctor.methods.getPatientDetails("0x9F941ad274Addf70ac70648e6d57884502692AD9").call()
+    var a = await this.state.contractDoctor.methods.getPatientDetails("0xE8D27c94C7Aa617d3C7677FA58e05ba92219Da63").call()
     console.log(a);
   }
 
@@ -315,6 +328,7 @@ class PatientView extends Component {
                       ))}           
                   </select>
                   <br/>
+                  <button type="submit" onClick={this.confirmSelection}>Confirm selection</button>
                   <button type="submit" onClick={this.grant}>Grant Access</button>
                 </div>
               </main>
